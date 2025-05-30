@@ -1,0 +1,12 @@
+Hello I am learning node jsHello I am learning path module
+Hello I am learning path module
+Hello I am learning path module
+Hello I am learning path module
+Hello I am learning path module
+time :  2025-05-30T15:10:34.794Z message : Hello I am learning path module 
+time :  2025-05-30T15:10:36.540Z message : Hello I am learning path module 
+time :  2025-05-30T15:10:37.676Z message : Hello I am learning path module 
+time :  2025-05-30T15:10:38.630Z message : Hello I am learning path module 
+time :  2025-05-30T15:10:39.611Z message : Hello I am learning path module 
+time :  2025-05-30T15:10:40.597Z message : Hello I am learning path module 
+time :  2025-05-30T15:10:41.549Z message : Hello I am learning path module 
