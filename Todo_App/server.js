@@ -1,31 +1,26 @@
 const http =require('http');
-const data =  [
-    {
-        "title" : "prisma",
-        "body" : "learning node",
-        "createdAt" : "15/02/2025 , 1:25:02 AM"
-    },
-        {
-        "title" : "typescript",
-        "body" : "learning node",
-        "createdAt" : "5/02/2024 , 10:25:02 AM"
-    }
-]
+ const path = require("path");
+ const fs = require('fs');
+ const filePath = path.join(__dirname, "./db/data.json")
+//  console.log(__dirname, filePath)
 const server = http.createServer((req, res) => {
-    console.log(req.url,req.method)
+    // console.log(req.url,req.method)
+    //get all todos
     if (req.url === "/todos" && req.method === "GET") {
+        const data = fs.readFileSync(filePath,{encoding : "utf-8"})
         // res.end("ALL TODOS");
         //customize header
         res.writeHead(201,{
-            //  "content-type" : "application/json",
+             "content-type" : "application/json",
             //  "content-type" : "text/plain",
-             "content-type" : "text/HTML",
-
-
+            //  "content-type" : "text/HTML",
              "email" : "123@gmail.com"
         })
         // res.end(JSON.stringify(data));
-        res.end(`<div>Hello html</div> <h1>Hello html</h1>`);
+        res.end(
+            data
+            // `<div>Hello html</div> <h1>Hello html</h1>`
+        );
 
         //another way customize header
         // res.setHeader("content-type" ,"text/plain");
@@ -37,10 +32,27 @@ const server = http.createServer((req, res) => {
 
 
 
-    } else if (req.url === "/todos/create-todo" && req.method === "POST"){
-        res.end("TODO Create");
+    }
+    //post sigle todo 
+    else if (req.url === "/todos/create-todo" && req.method === "POST"){
+        let data = "";
+        req.on("data", (chunk) =>{
+            data = data + chunk;
+
+        })
+        req.on("end", ()=>{
+            const {title, body} = JSON.parse(data);
+            const createdAt = new Date().toLocaleString();
+            console.log({body, title, createdAt})
+            const allTodos = fs.readFileSync(filePath,{encoding : "utf-8"});
+            const parseAllTodos = JSON.parse(allTodos);
+            parseAllTodos.push({title, body, createdAt})
+            console.log(parseAllTodos)
+            fs.writeFileSync(filePath, JSON.stringify(parseAllTodos, null,2), {encoding : "utf-8"})
+            res.end(JSON.stringify(parseAllTodos));
+        })
     }  else {
-        res.end('route not found')
+        res.end('route not found');
     }
 });
 
