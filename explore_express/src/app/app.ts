@@ -1,12 +1,13 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
-// import { todosRouter } from './app/todos/todos.routes';
+import { todosRouter } from './todos/todos.routes';
 const app: Application = express();
+
 app.use(express.json());
+ 
 const userRouter = express.Router();
 
-// app.use("/todos", todosRouter);
 app.use("/users", userRouter);
-
+app.use("/todos", todosRouter);
 
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
     console.log({
@@ -16,7 +17,7 @@ app.get('/', (req: Request, res: Response, next: NextFunction) => {
     });
     next()
 },
- 
+  
     async (req: Request, res: Response, next: NextFunction) => {
         try {
             res.send('Welcome to Todos App')
