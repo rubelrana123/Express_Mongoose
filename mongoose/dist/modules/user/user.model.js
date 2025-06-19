@@ -35,13 +35,21 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importStar(require("mongoose"));
 const userSchema = new mongoose_1.default({
-    name: { type: String },
-    email: { type: String },
-    phone: { type: String },
-    password: { type: String },
+    name: { type: String, require: true },
+    email: { type: String, require: true, validate: {
+            validator: function (value) {
+                return /122@/2 / 3;
+                dsomethinghrereregex / .test(value);
+            },
+            message: props => `${props.value} is not a valid`,
+            immutable: true
+        } },
+    phone: { type: String, require: true },
+    password: { type: String, require: true },
     role: {
         type: String,
-        enum: ["Admin", "Customer"]
+        enum: ["Admin", "Customer"],
+        require: true
     }
 });
 const User = (0, mongoose_1.model)("user", userSchema);
