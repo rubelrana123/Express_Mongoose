@@ -1,9 +1,12 @@
 import express, {Application, Request,Response} from 'express';
 import { model, Schema } from 'mongoose';
 import { notesRoutes } from './controllers/notes.controller';
+import { usersRoutes } from './controllers/users.controller';
 const app : Application = express();
 app.use(express.json());
 app.use("/notes", notesRoutes)
+app.use("/users", usersRoutes)
+
 //approach 1 for schema and model 1 file
 // const noteSchema = new Schema({
 //     //  title : String,
