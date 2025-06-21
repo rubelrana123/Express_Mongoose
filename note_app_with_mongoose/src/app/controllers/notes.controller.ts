@@ -3,12 +3,23 @@ import express, {Application, Request,Response} from 'express';
 import { Note } from "../models/notes.model";
 export const notesRoutes = express.Router();
 notesRoutes.get("", async(req : Request, res : Response) => {
-    const notes = await Note.find({})
-    res.status(201).json({
+      try {
+            const notes = await Note.find().populate('user');
+        res.status(201).json({
         success : true,
         message : "get note successfully",
         notes
     })
+        
+      } catch (error : any) {
+         res.status(400).json({
+        success : false,
+        message : "get err successfully",
+        error
+         
+    })
+        
+      }
     
 })
 notesRoutes.get("/:noteId", async(req : Request, res : Response) => {

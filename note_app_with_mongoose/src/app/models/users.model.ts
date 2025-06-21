@@ -1,31 +1,40 @@
-import { model, Schema } from "mongoose";
-import { IUSer } from "../interfaces/user.interfaces";
+import { Model, model, Schema } from "mongoose";
+import { IAddress, IUser, UserInstanceMethods, UserStaticMethods } from "../interfaces/user.interfaces";
 import validator from "validator";
-  const userSchema  = new Schema<IUSer>({
+import bcrypt from "bcryptjs";
+import { Note } from "./notes.model";
+
+ const addressSchema = new Schema<IAddress>({
+     city : {type : String, required : true},
+    street : {type : String, required : true},
+    zip : {type : Number, required : true}
+
+ }, {_id : false})
+  const userSchema  = new Schema<IUser, UserStaticMethods, UserInstanceMethods>({
     firstName : {
         type : String,
-        required : [true, "first name missiong"],
+        required : [true, "first name missing"],
         trim : true,
         minlength : [5, "{VALUE}  only need atleast 5 length"],
         maxlength : [15, "max length allow 15"]
 
     },
-        lastName : {
+    lastName : {
         type : String,
-        required : true,
+        required : [true, "first name missing"],
         trim : true,
         minlength : [5, "{VALUE} only need atleast 5 length"],
         maxlength : [15, "max length allow 15"]
 
     },
-    email : {
-        type : String, 
-        required : true,
-        unique : true,
-        lowercase : true,
-        trim : true,
-        //approach 1
-       validate : [ validator.isEmail, "invalid email address"]
+   email: {
+    type: String,
+    required: true,
+    unique: true, // creates index
+    lowercase: true,
+    trim: true,
+    validate: [validator.isEmail, "Invalid email address"],
+  
         //approach 2
         // validate: {
 //     validator: function (v: string) {
@@ -58,8 +67,54 @@ import validator from "validator";
         required : true,
         min : 18,
         max : 60
-    }
-
+    },
+    address : addressSchema,
+    
+},{
+    versionKey : false,
+    timestamps : false,
+    toJSON : {virtuals : true},
+    toObject : {virtuals :true}
+}
+)
+ 
+userSchema.method("hashPassword", async function (plainPassword: string) {
+    const password = await bcrypt.hash(plainPassword, 10)
+    console.log("password model method", password)
+    return password
 })
 
-export  const User = model("Users", userSchema)
+userSchema.static("hashPassword", async function (plainPassword: string) {
+    const password = await bcrypt.hash(plainPassword, 10)
+    console.log("password model static", password)
+    return password
+})
+userSchema.pre("save", async function (){
+    console.log("pre inside")
+      const password = await bcrypt.hash(this.password, 10)
+      this.password = password;
+
+    })
+userSchema.post("find",  async function (){
+     console.log(`pre inside find `);
+      
+ 
+})
+userSchema.post("save",   function (doc){
+    console.log(`post inside ${doc?.firstName}`);
+})
+userSchema.post("findOneAndDelete",  async function (doc){
+   if(doc){
+     console.log(`post inside delete ${doc}`);
+     await Note.deleteMany({user : doc._id});
+     
+   }
+})
+
+userSchema.virtual('fullName').get(function(){
+    return `${this.firstName} ${this.lastName}`
+
+})
+export const User = model<IUser, UserStaticMethods>('Users', userSchema);
+
+// const answer: number = User.myStaticMethod(); // 42

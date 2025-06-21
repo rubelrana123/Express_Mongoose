@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
   type NoteCategory = 'personal' | 'study' | 'work' | 'other';
   
   interface ITag {
@@ -14,4 +16,5 @@ export interface INote {
   tags: ITag;
   createdAt?: string;
   updatedAt?: string;
+  user : Types.ObjectId;
 }
