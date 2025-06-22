@@ -1,34 +1,21 @@
-import express, { Application, Request, Response } from "express";
-import cors from "cors";
-import mongoose from "mongoose";
-import config from "./config";
-import { userRoute } from "./modules/user/user.route";
+ 
+import mongoose from 'mongoose';
+import app from './app';
+import config from './config';
 
-const app: Application = express();
-
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-app.use(userRoute)
-
-// Sample route (optional)
-app.get("/", (req: Request, res: Response) => {
-  res.send("Server is up and running!");
-});
-
-// Server and DB Connection
-const startServer = async () => {
+async function server() {
   try {
-    await mongoose.connect(config.database_url as string);
-    console.log("✅ Connected to MongoDB");
+    // Connect Database -- here
+      //  await mongoose.connect(config.database_url);
+       await mongoose.connect("mongodb://localhost:27017/mangoApp");
 
+       console.log("mongodb connected")
     app.listen(config.port, () => {
-      console.log(`🚀 Server is running on port ${config.port}`);
+      console.log(`✅ Server running on port ${config.port}`);
     });
   } catch (error) {
-    console.error("❌ Failed to connect to the database", error);
+    console.error('❌ Failed to start server:', error);
   }
-};
+}
 
-startServer();
+server();
